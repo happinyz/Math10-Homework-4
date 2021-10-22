@@ -22,14 +22,18 @@ if f:
             return True
         except:
             return False
+
+    pd.set_option('display.max_rows', df.shape[0]+1)
     
-    df.applymap(lambda x : np.nan if x == " " else x)
+    df = df.applymap(lambda x : np.nan if x == " " else x)
+    
+
     numeric_cols = [c for c in df.columns if can_be_numeric(c)]
 
     df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, axis = 0)
 
-    x = st.selectbox("Choose any numeric column for the x-axis", df.columns)
-    y = st.selectbox("Choose any numeric column for the y-axis", df.columns)
+    x = st.selectbox("Choose any numeric column for the x-axis", numeric_cols)
+    y = st.selectbox("Choose any numeric column for the y-axis", numeric_cols)
 
     st.write("")
     st.write("")
@@ -40,6 +44,15 @@ if f:
     st.write(f'X-axis: {x}')
     st.write(f'Y-axis: {y}')
     st.write(f'Number of rows: {slider}')
+    st.write("")
+    st.write("")
+    st.write(f'Maximum for x: {df[x].max()}')
+    st.write(f'Maximum for y: {df[y].max()}')
+    st.write(f'Minimum for x: {df[x].min()}')
+    st.write(f'Minimum for y: {df[y].min()}')
+    st.write(f'Mean for x: {df[x].mean()}')
+    st.write(f'Mean for y: {df[y].mean()}')
+    st.write("")
 
     chart = alt.Chart(df.iloc[:slider]).mark_line().encode(
         x = x, y = y
